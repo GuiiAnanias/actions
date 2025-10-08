@@ -1,0 +1,29 @@
+name: Show Commit Info
+
+on:
+  push:
+    branches:
+      - main  # ou a branch que quiser monitorar
+
+jobs:
+  show-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get last commit info
+        id: commit_info
+        run: |
+          # Pega a data do último commit (ISO 8601)
+          DATE=$(git log -1 --format=%cd --date=iso)
+          # Pega a mensagem do último commit
+          MESSAGE=$(git log -1 --format=%s)
+          echo "commit_date=$DATE" >> $GITHUB_OUTPUT
+          echo "commit_message=$MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Show commit date and message
+        run: |
+          echo "Commit Date: ${{ steps.commit_info.outputs.commit_date }}"
+          echo "Commit Message: ${{ steps.commit_info.outputs.commit_message }}"
